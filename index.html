@@ -114,10 +114,8 @@
       loader.querySelector(".spinner").style.display = "none";
     }
     gameInstance.progress.style.transform = `scaleX(${progress})`;
-    if (progress === 1 && !gameInstance.removeTimeout) {
-      gameInstance.removeTimeout = setTimeout(function() {
-          loader.style.display = "none";
-      }, 2000);
+    if (progress === 1) {
+      loader.style.display = "none";
     }
   }
   </script>
