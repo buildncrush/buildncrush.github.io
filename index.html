@@ -125,13 +125,24 @@
       <div class="full"></div>
     </div>
   </div>
-  <script src="/ads.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    var blockingAds = true;
-    if (document.getElementById('ytey5fwy54ywvuecxh')) {
-      blockingAds = false;
-    }
+
+  <script>
+    var hasAdblocker;
+    setTimeout(function () {
+      var myRequest = new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+        method: 'HEAD',
+        mode: 'no-cors'
+      });
+      fetch(myRequest).then(function (response) {
+        return response;
+      }).then(function (response) {
+        hasAdblocker = false;
+      }).catch(function (e) {
+        hasAdblocker = true;
+      });
+    }, 2000);
   </script>
+
 </body>
 
 <script src="Build/UnityLoader.js"></script>
