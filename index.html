@@ -3,18 +3,22 @@
 
 <head>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89938714-12"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
+    // if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
+    //   document.write(
+    //     "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-89938714-12'>\x3C/script>"
+    //   );
+    //   window.dataLayer = window.dataLayer || [];
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-
-    gtag('config', 'UA-89938714-12');
-  </script> -->
+    //   function gtag() {
+    //     dataLayer.push(arguments);
+    //   }
+    //   gtag('js', new Date());
+    //   gtag('config', 'UA-89938714-12', {
+    //     'anonymize_ip': true
+    //   });
+    // }
+  </script>
 
 
   <meta charset="utf-8">
@@ -121,10 +125,14 @@
     };
     aiptag.cmd.display = aiptag.cmd.display || [];
     aiptag.cmd.player = aiptag.cmd.player || [];
-    // Show GDPR consent tool
+
     aiptag.gdprShowConsentTool = true;
     aiptag.gdprConsentToolPosition = "bottom";
-    // If you use your own GDPR consent tool please set aiptag.gdprConsent = false; if an EU user has declined or not yet accepted marketing cookies, for users outside the EU or for users that accepted the GDPR please use aiptag.gdprConsent = true;
+
+    // aiptag.gdprShowConsentTool = false;
+    // aiptag.gdprAlternativeConsentTool = true;
+    // if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "false")
+    //   aiptag.gdprConsent = false;
 
     aiptag.cmd.player.push(function () {
       adplayer = new aipPlayer({
@@ -141,7 +149,9 @@
       });
     });
   </script>
-  <script async src="//api.adinplay.com/libs/aiptag/pub/BNC/buildncrush.com/tag.min.js"></script>
+  <script async src="//api.adinplay.com/libs/aiptag/pub/BNC/buildncrush.com/tag.min.js">
+  </script>
+
 </head>
 
 <body>
@@ -172,10 +182,61 @@
   </script>
 
   <div id="preroll" style="display: none;"></div>
+
+
+  <div id="gdprPopup"
+    style="display:none;max-width: 24em;position: fixed;bottom: 20px;left: 20px;background-color: #231f20;color:white;padding:20px;font-family: 'Roboto', sans-serif;font-size: 90%;text-align: center;border-radius: 5px;;">
+    <div style="text-align: left;">
+      This website uses ad monetization services of AdinPlay BV and uses cookies to personalize ads, ad serving,
+      analytics and verification. By clicking 'Got it!' you confirm that you consent to setting cookies and
+      processing
+      your personal data for all the listed purposes. If you are under the age of consent in your jurisdiction for
+      data processing purposes, or if you wish to deny consent, click "Learn more". <span
+        style="text-decoration: underline;cursor: pointer;"
+        onclick="document.getElementById('detailedGdpr').style.display='block'">Learn more.</span>
+    </div>
+
+    <div
+      style="padding:7px 50px 7px 50px;font-size: 110%;background-color: rgb(34, 150, 34);display: inline-block;border-radius: 5px;margin-top: 15px;cursor: pointer;"
+      onclick="allowCookies();">
+      Got it!
+    </div>
+  </div>
+
+
+  <div id="detailedGdpr"
+    style="display: none; background-color: #231f20;color:white;padding:20px;font-family: 'Roboto', sans-serif;font-size: 90%;text-align: center;border-radius: 5px;left: 50%;top: 50%;transform: translate(-50%, -50%);position: fixed;">
+    <div style="text-align: left;">
+      We use cookies to personalize content and ads, to provide social media features, and to analyze our traffic.
+      We also share information about your use of our site with our social media, advertising and analytics
+      partners who may combine it with other information that you've provided to them or that they've collected
+      from your use of their services. You consent to our cookies if you continue to use our website. Click <span
+        style="text-decoration: underline;cursor: pointer;"
+        onclick="document.getElementById('detailedGdpr').style.display='none';document.getElementById('gdprPopup').style.display='none';localStorage.setItem('allowCookies', false);">here</span>
+      to opt out of using cookies.
+    </div>
+    <div
+      style="padding:7px 50px 7px 50px;font-size: 110%;background-color: rgb(34, 150, 34);display: inline-block;border-radius: 5px;margin-top: 15px;cursor: pointer;"
+      onclick="allowCookies();">
+      Got it!
+    </div>
+  </div>
 </body>
 
 <script src="Build/UnityLoader.js"></script>
 <script>
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
+
+  function allowCookies() {
+    document.getElementById('detailedGdpr').style.display = 'none';
+    document.getElementById('gdprPopup').style.display = 'none';
+    localStorage.setItem('allowCookies', true);
+  }
+
   var gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json", {
     onProgress: UnityProgress
   });
@@ -194,6 +255,11 @@
     gameInstance.progress.style.transform = `scaleX(${progress})`;
     if (progress === 1) {
       loader.style.display = "none";
+
+      // if (getCookie("userFromEEA") === "false")
+      //   localStorage.setItem('allowCookies', true);
+      // if (localStorage.getItem('allowCookies') === null)
+      //   document.getElementById('gdprPopup').style.display = 'block';
     }
   }
 </script>
