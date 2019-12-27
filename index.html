@@ -4,20 +4,20 @@
 <head>
 
   <script>
-    // if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
-    //   document.write(
-    //     "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-89938714-12'>\x3C/script>"
-    //   );
-    //   window.dataLayer = window.dataLayer || [];
+    if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
+      document.write(
+        "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-89938714-12'>\x3C/script>"
+      );
+      window.dataLayer = window.dataLayer || [];
 
-    //   function gtag() {
-    //     dataLayer.push(arguments);
-    //   }
-    //   gtag('js', new Date());
-    //   gtag('config', 'UA-89938714-12', {
-    //     'anonymize_ip': true
-    //   });
-    // }
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-89938714-12', {
+        'anonymize_ip': true
+      });
+    }
   </script>
 
 
@@ -126,13 +126,14 @@
     aiptag.cmd.display = aiptag.cmd.display || [];
     aiptag.cmd.player = aiptag.cmd.player || [];
 
-    aiptag.gdprShowConsentTool = true;
-    aiptag.gdprConsentToolPosition = "bottom";
+    //default gdpr
+    //aiptag.gdprShowConsentTool = true;
+    //aiptag.gdprConsentToolPosition = "bottom";
 
-    // aiptag.gdprShowConsentTool = false;
-    // aiptag.gdprAlternativeConsentTool = true;
-    // if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "false")
-    //   aiptag.gdprConsent = false;
+    aiptag.gdprShowConsentTool = false;
+    aiptag.gdprAlternativeConsentTool = true;
+    if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "false")
+      aiptag.gdprConsent = false;
 
     aiptag.cmd.player.push(function () {
       adplayer = new aipPlayer({
@@ -183,6 +184,34 @@
 
   <div id="preroll" style="display: none;"></div>
 
+  <div id="bottom-left-banner" style="display: none;position: fixed;bottom:15px;left: 15px;width:300px;height:250px;">
+    <div id='buildncrush-com_300x250'>
+      <script type='text/javascript'>
+        aiptag.cmd.display.push(function () {
+          aipDisplayTag.display('buildncrush-com_300x250');
+        });
+      </script>
+    </div>
+  </div>
+
+  <div id="bottom-banner"
+    style="display: none; position: fixed;bottom:40px;width:728px;height:90px;left: 50%;transform: translateX(-50%);">
+    <div id='buildncrush-com_728x90'>
+      <script type='text/javascript'>
+        aiptag.cmd.display.push(function () {
+          aipDisplayTag.display('buildncrush-com_728x90');
+        });
+      </script>
+    </div>
+  </div>
+
+  <script>
+    //hide long banner on small screens
+    if (window.innerWidth < 1350) {
+      var element = document.getElementById("bottom-banner");
+      element.parentNode.removeChild(element);
+    }
+  </script>
 
   <div id="gdprPopup"
     style="display:none;max-width: 24em;position: fixed;bottom: 20px;left: 20px;background-color: #231f20;color:white;padding:20px;font-family: 'Roboto', sans-serif;font-size: 90%;text-align: center;border-radius: 5px;;">
@@ -222,34 +251,6 @@
     </div>
   </div>
 
-  <div id="bottom-left-banner" style="display: none;position: fixed;bottom:15px;left: 15px;width:300px;height:250px;">
-    <div id='buildncrush-com_300x250'>
-      <script type='text/javascript'>
-        aiptag.cmd.display.push(function () {
-          aipDisplayTag.display('buildncrush-com_300x250');
-        });
-      </script>
-    </div>
-  </div>
-
-  <div id="bottom-banner"
-    style="display: none; position: fixed;bottom:40px;width:728px;height:90px;left: 50%;transform: translateX(-50%);">
-    <div id='buildncrush-com_728x90'>
-      <script type='text/javascript'>
-        aiptag.cmd.display.push(function () {
-          aipDisplayTag.display('buildncrush-com_728x90');
-        });
-      </script>
-    </div>
-  </div>
-
-  <script>
-    if (window.innerWidth < 1350) {
-      var element = document.getElementById("bottom-banner");
-      element.parentNode.removeChild(element);
-    }
-  </script>
-
 </body>
 
 <script src="Build/UnityLoader.js"></script>
@@ -284,12 +285,28 @@
     gameInstance.progress.style.transform = `scaleX(${progress})`;
     if (progress === 1) {
       loader.style.display = "none";
-
-      // if (getCookie("userFromEEA") === "false")
-      //   localStorage.setItem('allowCookies', true);
-      // if (localStorage.getItem('allowCookies') === null)
-      //   document.getElementById('gdprPopup').style.display = 'block';
     }
+  }
+
+
+  if (localStorage.getItem('allowCookies') == null) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function () {
+      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+        var countryCode = JSON.parse(xmlHttp.responseText).country_code;
+        var cookieLawStates = ['AT', 'BE', 'BG', 'BR', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'GB',
+          'HR',
+          'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'
+        ];
+        if (cookieLawStates.indexOf(countryCode) > -1) {
+          document.getElementById('gdprPopup').style.display = 'block';
+        } else {
+          localStorage.setItem('allowCookies', true);
+        }
+      }
+    }
+    xmlHttp.open("GET", "https://freegeoip.app/json/", true); // true for asynchronous 
+    xmlHttp.send(null);
   }
 </script>
 
