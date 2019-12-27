@@ -125,14 +125,10 @@
     };
     aiptag.cmd.display = aiptag.cmd.display || [];
     aiptag.cmd.player = aiptag.cmd.player || [];
-
-    //default gdpr
-    //aiptag.gdprShowConsentTool = true;
-    //aiptag.gdprConsentToolPosition = "bottom";
-
     aiptag.gdprShowConsentTool = false;
     aiptag.gdprAlternativeConsentTool = true;
-    if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "false")
+
+    if (localStorage.getItem('allowCookies') == null || localStorage.getItem('allowCookies').toString() === "false")
       aiptag.gdprConsent = false;
 
     aiptag.cmd.player.push(function () {
@@ -165,23 +161,6 @@
     </div>
   </div>
 
-  <script>
-    var hasAdblocker;
-    setTimeout(function () {
-      var myRequest = new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
-        method: 'HEAD',
-        mode: 'no-cors'
-      });
-      fetch(myRequest).then(function (response) {
-        return response;
-      }).then(function (response) {
-        hasAdblocker = false;
-      }).catch(function (e) {
-        hasAdblocker = true;
-      });
-    }, 2000);
-  </script>
-
   <div id="preroll" style="display: none;"></div>
 
   <div id="bottom-left-banner" style="display: none;position: fixed;bottom:15px;left: 15px;width:300px;height:250px;">
@@ -205,14 +184,6 @@
     </div>
   </div>
 
-  <script>
-    //hide long banner on small screens
-    if (window.innerWidth < 1350) {
-      var element = document.getElementById("bottom-banner");
-      element.parentNode.removeChild(element);
-    }
-  </script>
-
   <div id="gdprPopup"
     style="display:none;max-width: 24em;position: fixed;bottom: 20px;left: 20px;background-color: #231f20;color:white;padding:20px;font-family: 'Roboto', sans-serif;font-size: 90%;text-align: center;border-radius: 5px;;">
     <div style="text-align: left;">
@@ -231,7 +202,6 @@
       Got it!
     </div>
   </div>
-
 
   <div id="detailedGdpr"
     style="display: none; background-color: #231f20;color:white;padding:20px;font-family: 'Roboto', sans-serif;font-size: 90%;text-align: center;border-radius: 5px;left: 50%;top: 50%;transform: translate(-50%, -50%);position: fixed;">
@@ -255,16 +225,32 @@
 
 <script src="Build/UnityLoader.js"></script>
 <script>
-  function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+  //hide long banner on small screens
+  if (window.innerWidth < 1350) {
+    var element = document.getElementById("bottom-banner");
+    element.parentNode.removeChild(element);
   }
+
+  var hasAdblocker;
+  setTimeout(function () {
+    var myRequest = new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+      method: 'HEAD',
+      mode: 'no-cors'
+    });
+    fetch(myRequest).then(function (response) {
+      return response;
+    }).then(function (response) {
+      hasAdblocker = false;
+    }).catch(function (e) {
+      hasAdblocker = true;
+    });
+  }, 2000);
 
   function allowCookies() {
     document.getElementById('detailedGdpr').style.display = 'none';
     document.getElementById('gdprPopup').style.display = 'none';
     localStorage.setItem('allowCookies', true);
+    aiptag.gdprConsent = true;
   }
 
   var gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json", {
@@ -293,19 +279,14 @@
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function () {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-        var countryCode = JSON.parse(xmlHttp.responseText).country_code;
-        var cookieLawStates = ['AT', 'BE', 'BG', 'BR', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'GB',
-          'HR',
-          'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'
-        ];
-        if (cookieLawStates.indexOf(countryCode) > -1) {
+        if (xmlHttp.responseText == "allow") {
+          allowCookies();
+        } else if (xmlHttp.responseText == "show") {
           document.getElementById('gdprPopup').style.display = 'block';
-        } else {
-          localStorage.setItem('allowCookies', true);
         }
       }
     }
-    xmlHttp.open("GET", "https://freegeoip.app/json/", true); // true for asynchronous 
+    xmlHttp.open("GET", "https://api.buildncrush.com/gdpr", true);
     xmlHttp.send(null);
   }
 </script>
