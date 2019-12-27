@@ -4,15 +4,16 @@
 <head>
 
   <script>
-    if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
-      document.write(
-        "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-89938714-12'>\x3C/script>"
-      );
-      window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
 
-      function gtag() {
-        dataLayer.push(arguments);
-      }
+    function addGoogleAnalytics() {
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=UA-89938714-12';
+      document.head.prepend(script);
+      window.dataLayer = window.dataLayer || [];
       gtag('js', new Date());
       gtag('config', 'UA-89938714-12', {
         'anonymize_ip': true
@@ -148,7 +149,6 @@
   </script>
   <script async src="//api.adinplay.com/libs/aiptag/pub/BNC/buildncrush.com/tag.min.js">
   </script>
-
 </head>
 
 <body>
@@ -225,10 +225,13 @@
 
 <script src="Build/UnityLoader.js"></script>
 <script>
-  //hide long banner on small screens
   if (window.innerWidth < 1350) {
     var element = document.getElementById("bottom-banner");
     element.parentNode.removeChild(element);
+  }
+
+  if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
+    addGoogleAnalytics();
   }
 
   var hasAdblocker;
@@ -251,6 +254,7 @@
     document.getElementById('gdprPopup').style.display = 'none';
     localStorage.setItem('allowCookies', true);
     aiptag.gdprConsent = true;
+    addGoogleAnalytics();
   }
 
   var gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json", {
@@ -273,7 +277,6 @@
       loader.style.display = "none";
     }
   }
-
 
   if (localStorage.getItem('allowCookies') == null) {
     var xmlHttp = new XMLHttpRequest();
