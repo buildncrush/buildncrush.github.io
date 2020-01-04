@@ -118,6 +118,12 @@
         transform: rotate(360deg);
       }
     }
+
+    @media screen and (max-width: 1350px) {
+      #bottom-banner {
+        display: none;
+      }
+    }
   </style>
 
   <script>
@@ -225,11 +231,6 @@
 
 <script src="Build/UnityLoader.js"></script>
 <script>
-  if (window.innerWidth < 1350) {
-    var element = document.getElementById("bottom-banner");
-    element.parentNode.removeChild(element);
-  }
-
   if (localStorage.getItem('allowCookies') != null && localStorage.getItem('allowCookies').toString() === "true") {
     addGoogleAnalytics();
   }
