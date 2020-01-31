@@ -145,5 +145,3 @@ if (localStorage.getItem('allowCookies') == null) {
     xmlHttp.open("GET", "https://api.buildncrush.com/gdpr", true);
     xmlHttp.send(null);
 }
-
-refreshBanners();
